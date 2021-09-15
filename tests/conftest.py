@@ -16,11 +16,15 @@ def token2():
 
 @pytest.fixture
 def gov(accounts):
-    yield accounts.at("0xC0E2830724C946a6748dDFE09753613cd38f6767", force=True)
+    addr = "0xC0E2830724C946a6748dDFE09753613cd38f6767"
+    accounts[0].transfer(addr, 2e18)
+    yield accounts.at(addr, force=True)
 
 @pytest.fixture
 def dev(accounts):
-    yield accounts.at("0x441112Bd62b49371C2f876ee0740246f78B4111c", force=True)
+    addr = "0x441112Bd62b49371C2f876ee0740246f78B4111c"
+    accounts[0].transfer(addr, 5e18)
+    yield accounts.at(addr, force=True)
 
 @pytest.fixture
 def whale(accounts, token1, token2):
