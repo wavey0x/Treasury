@@ -1,8 +1,7 @@
-import pytest
 import brownie
-from brownie import Wei, accounts, Contract, config
+from brownie import accounts
 
-def test_token_retrieve(treasury, token1, token2, gov, whale, chain):
+def test_token_retrieve(treasury, token1, token2, gov, whale):
     token1.transfer(treasury, 1e10,{'from': whale})
     token2.transfer(treasury, 1e20,{'from': whale})
     
@@ -34,7 +33,7 @@ def test_token_retrieve(treasury, token1, token2, gov, whale, chain):
     treasury.retrieveETHExact(1e18, {"from": gov})
     assert treasury.balance() == bal_before - 1e18
 
-def test_access_control(treasury, token1, token2, dev, gov, whale, accounts, chain):
+def test_access_control(treasury, token1, token2, dev, gov, whale):
     token1.transfer(treasury, 1e10,{'from': whale})
     token2.transfer(treasury, 1e20,{'from': whale})
 
@@ -58,5 +57,3 @@ def test_access_control(treasury, token1, token2, dev, gov, whale, accounts, cha
     assert treasury.governance() == gov
     assert treasury.acceptGovernance({"from": dev})
     assert treasury.governance() == dev
-
-    assert False
