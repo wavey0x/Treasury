@@ -4,15 +4,14 @@ pragma experimental ABIEncoderV2;
 // These are the core Yearn libraries
 import {
     SafeERC20,
-    SafeMath,
     IERC20,
     Address
 } from "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import "@openzeppelin/contracts/math/Math.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract Treasury is ReentrancyGuard {
     using SafeERC20 for IERC20;
+    using Address for address;
 
     address public governance;
     address public pendingGovernance;
