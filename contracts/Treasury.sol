@@ -63,8 +63,8 @@ contract Treasury is ReentrancyGuard {
         uint amount = address(this).balance;
         (bool success, bytes memory returnData) = governance.call{value: amount}("");
         if(!success) {emit FailedETHSend(returnData);}
-        emit RetrieveETH(amount);
         require(success, "Sending ETH failed");
+        emit RetrieveETH(amount);
     }
 
     function retrieveETHExact(uint _amount) external onlyGovernance nonReentrant {
