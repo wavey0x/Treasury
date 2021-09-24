@@ -48,26 +48,19 @@ contract Treasury is ReentrancyGuard {
 
     //Retrieve full balance of token in contract
     function retrieveToken(address _token) external onlyGovernance {
-        IERC20 token = IERC20(_token);
-        uint amount = token.balanceOf(address(this));
-        token.safeTransfer(governance, amount);
-        emit RetrieveToken(_token, amount);
+        retrieveTokenExact(_token, IERC20(_token).balanceOf(address(this)));
     }
 
-    function retrieveTokenExact(address _token, uint _amount) external onlyGovernance {
+    function retrieveTokenExact(address _token, uint _amount) public onlyGovernance {
         IERC20(_token).safeTransfer(governance, _amount);
         emit RetrieveToken(_token, _amount);
     }
 
-    function retrieveETH() external onlyGovernance nonReentrant {
-        uint amount = address(this).balance;
-        (bool success, bytes memory returnData) = governance.call{value: amount}("");
-        if(!success) {emit FailedETHSend(returnData);}
-        emit RetrieveETH(amount);
-        require(success, "Sending ETH failed");
+    function retrieveETH() external onlyGovernance {
+        retrieveETHExact(address(this).balance);
     }
 
-    function retrieveETHExact(uint _amount) external onlyGovernance nonReentrant {
+    function retrieveETHExact(uint _amount) public onlyGovernance nonReentrant {
         (bool success, bytes memory returnData) = governance.call{value: _amount}("");
         if(!success) {emit FailedETHSend(returnData);}
         require(success, "Sending ETH failed");
