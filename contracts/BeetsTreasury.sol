@@ -60,7 +60,7 @@ interface IBeetsBar is IERC20 {
 }
 
 
-contract FBeetsTreasury is ReentrancyGuard {
+contract BeetsTreasury is ReentrancyGuard {
     using SafeERC20 for IERC20;
     using Address for address;
 
