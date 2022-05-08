@@ -43,7 +43,7 @@ interface IBalancerVault {
     ) external;
 }
 
-interface IVault is IERC20{
+interface IVault is IERC20 {
     function deposit(uint256 _amount) external;
 
     function withdraw(uint256 _amount) external;
@@ -200,7 +200,7 @@ contract BeetsTreasury is ReentrancyGuard {
     }
 
     function exitAll() external onlyAllowed {
-        _yv(fBeets.balanceOf(address(this)), false);
+        _yv(yvFBeets.balanceOf(address(this)), false);
         _beetsBar(fBeets.balanceOf(address(this)), false);
         _lp(stakeLp.balanceOf(address(this)), false);
     }
