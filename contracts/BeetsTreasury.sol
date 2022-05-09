@@ -4,6 +4,7 @@ pragma experimental ABIEncoderV2;
 // These are the core Yearn libraries
 import {SafeERC20, IERC20, Address} from "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "./Treasury.sol";
 
 interface IBalancerPool is IERC20 {
     function getPoolId() external view returns (bytes32 poolId);
@@ -60,13 +61,11 @@ interface IBeetsBar is IERC20 {
 }
 
 
-contract BeetsTreasury is ReentrancyGuard {
+contract BeetsTreasury is ReentrancyGuard, Treasury {
     using SafeERC20 for IERC20;
     using Address for address;
 
-    address public governance;
     address public manager;
-    address public pendingGovernance;
     IBalancerVault public constant bVault = IBalancerVault(0x20dd72Ed959b6147912C2e529F0a0C651c33c9ce);
     IBalancerPool public constant stakeLp = IBalancerPool(0xcdE5a11a4ACB4eE4c805352Cec57E236bdBC3837);
     IERC20 public constant beets = IERC20(0xF24Bcf4d1e507740041C9cFd2DddB29585aDCe1e);
@@ -76,16 +75,7 @@ contract BeetsTreasury is ReentrancyGuard {
     address[] internal assets;
     uint256 public constant max = type(uint256).max;
 
-    event RetrieveToken (address token, uint amount);
-    event RetrieveETH (uint amount);
-    event PendingGovernance (address newPendingGov);
-    event AcceptedGovernance (address newGov);
-    event FailedETHSend(bytes returnedData);
-
-    receive() external payable {}
-
-    constructor(address _manager) public {
-        governance = msg.sender;
+    constructor(address _manager) public Treasury(){
         manager = _manager;
         assets = [address(wftm), address(beets)];
 
@@ -95,50 +85,10 @@ contract BeetsTreasury is ReentrancyGuard {
         fBeets.approve(address(yvFBeets), max);
     }
 
-    modifier onlyGovernance {
-        require(msg.sender == governance, "!governance");
-        _;
-    }
-
     modifier onlyAllowed {
         require(msg.sender == governance || msg.sender == manager, "!allowed");
         _;
     }
-
-    function setGovernance(address _newGov) external onlyGovernance {
-        require(_newGov != address(0));
-        pendingGovernance = _newGov;
-        emit PendingGovernance(_newGov);
-    }
-
-    function acceptGovernance() external {
-        require(msg.sender == pendingGovernance, "!pendingGovernance");
-        governance = pendingGovernance;
-        pendingGovernance = address(0);
-        emit AcceptedGovernance(governance);
-    }
-
-    //Retrieve full balance of token in contract
-    function retrieveToken(address _token) external onlyGovernance {
-        retrieveTokenExact(_token, IERC20(_token).balanceOf(address(this)));
-    }
-
-    function retrieveTokenExact(address _token, uint _amount) public onlyGovernance {
-        IERC20(_token).safeTransfer(governance, _amount);
-        emit RetrieveToken(_token, _amount);
-    }
-
-    function retrieveETH() external onlyGovernance {
-        retrieveETHExact(address(this).balance);
-    }
-
-    function retrieveETHExact(uint _amount) public onlyGovernance nonReentrant {
-        (bool success, bytes memory returnData) = governance.call{value : _amount}("");
-        if (!success) {emit FailedETHSend(returnData);}
-        require(success, "Sending ETH failed");
-        emit RetrieveETH(_amount);
-    }
-
 
     //  ====== BEETS HELPERS ======
 
