@@ -155,7 +155,7 @@ contract BeetsTreasury is ReentrancyGuard, Treasury {
         _lp(stakeLp.balanceOf(address(this)), false);
     }
 
-    function balances() external returns (uint256 _beets, uint256 _stakeLp, uint256 _fBeets, uint256 _yvFBeets){
+    function balances() external view returns (uint256 _beets, uint256 _stakeLp, uint256 _fBeets, uint256 _yvFBeets){
         return (
         beets.balanceOf(address(this)),
         stakeLp.balanceOf(address(this)),
