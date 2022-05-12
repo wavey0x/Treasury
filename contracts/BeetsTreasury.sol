@@ -61,7 +61,7 @@ interface IBeetsBar is IERC20 {
 }
 
 
-contract BeetsTreasury is ReentrancyGuard, Treasury {
+contract BeetsTreasury is Treasury {
     using SafeERC20 for IERC20;
     using Address for address;
 
@@ -73,7 +73,7 @@ contract BeetsTreasury is ReentrancyGuard, Treasury {
     IBeetsBar public constant fBeets = IBeetsBar(0xfcef8a994209d6916EB2C86cDD2AFD60Aa6F54b1);
     IVault public constant yvFBeets = IVault(0x1e2fe8074a5ce1Bb7394856B0C618E75D823B93b);
     address[] internal assets;
-    uint256 public constant max = type(uint256).max;
+    uint256 private constant max = type(uint256).max;
 
     constructor(address _manager) public Treasury(){
         manager = _manager;
