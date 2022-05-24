@@ -18,9 +18,8 @@ abstract contract Treasury is ReentrancyGuard {
 
     event RetrieveToken (address token, uint amount);
     event RetrieveETH (uint amount);
-    event PendingGovernance (address newPendingGov);
-    event AcceptedGovernance (address newGov);
-    event FailedETHSend(bytes returnedData);
+    event PendingGovernance (address indexed newPendingGov);
+    event AcceptedGovernance (address indexed newGov);
 
     receive() external payable {}
 
@@ -61,9 +60,10 @@ abstract contract Treasury is ReentrancyGuard {
     }
 
     function retrieveETHExact(uint _amount) public onlyGovernance nonReentrant {
-        (bool success, bytes memory returnData) = governance.call{value : _amount}("");
-        require(success, "Sending ETH failed");
-        emit RetrieveETH(_amount);
+        if (_amount > 0) {
+            (bool success, bytes memory returnData) = governance.call{value : _amount}("");
+            require(success, "Sending ETH failed");
+            emit RetrieveETH(_amount);
+        }
     }
-
 }

@@ -2,7 +2,6 @@ pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
 // These are the core Yearn libraries
-import {SafeERC20, IERC20, Address} from "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./Treasury.sol";
 
@@ -62,9 +61,6 @@ interface IBeetsBar is IERC20 {
 
 
 contract BeetsTreasury is Treasury {
-    using SafeERC20 for IERC20;
-    using Address for address;
-
     address public manager;
     IBalancerVault public constant bVault = IBalancerVault(0x20dd72Ed959b6147912C2e529F0a0C651c33c9ce);
     IBalancerPool public constant stakeLp = IBalancerPool(0xcdE5a11a4ACB4eE4c805352Cec57E236bdBC3837);
