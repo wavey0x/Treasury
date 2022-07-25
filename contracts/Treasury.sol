@@ -3,24 +3,23 @@ pragma experimental ABIEncoderV2;
 
 // These are the core Yearn libraries
 import {
-    SafeERC20,
-    IERC20,
-    Address
+SafeERC20,
+IERC20,
+Address
 } from "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract Treasury is ReentrancyGuard {
+abstract contract Treasury is ReentrancyGuard {
     using SafeERC20 for IERC20;
     using Address for address;
 
     address public governance;
     address public pendingGovernance;
 
-    event RetrieveToken (address token,uint amount);
+    event RetrieveToken (address token, uint amount);
     event RetrieveETH (uint amount);
-    event PendingGovernance (address newPendingGov);
-    event AcceptedGovernance (address newGov);
-    event FailedETHSend(bytes returnedData);
+    event PendingGovernance (address indexed newPendingGov);
+    event AcceptedGovernance (address indexed newGov);
 
     receive() external payable {}
 
@@ -39,7 +38,7 @@ contract Treasury is ReentrancyGuard {
         emit PendingGovernance(_newGov);
     }
 
-    function acceptGovernance() external{
+    function acceptGovernance() external {
         require(msg.sender == pendingGovernance, "!pendingGovernance");
         governance = pendingGovernance;
         pendingGovernance = address(0);
@@ -61,10 +60,10 @@ contract Treasury is ReentrancyGuard {
     }
 
     function retrieveETHExact(uint _amount) public onlyGovernance nonReentrant {
-        (bool success, bytes memory returnData) = governance.call{value: _amount}("");
-        if(!success) {emit FailedETHSend(returnData);}
-        require(success, "Sending ETH failed");
-        emit RetrieveETH(_amount);
+        if (_amount > 0) {
+            (bool success, bytes memory returnData) = governance.call{value : _amount}("");
+            require(success, "Sending ETH failed");
+            emit RetrieveETH(_amount);
+        }
     }
-
 }
