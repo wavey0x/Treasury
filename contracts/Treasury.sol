@@ -1,15 +1,11 @@
-pragma solidity 0.6.12;
+pragma solidity ^0.8.6;
 pragma experimental ABIEncoderV2;
 
 // These are the core Yearn libraries
-import {
-    SafeERC20,
-    IERC20,
-    Address
-} from "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {SafeERC20, IERC20, Address} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract Treasury is ReentrancyGuard {
+contract IntermediateTreasury is ReentrancyGuard {
     using SafeERC20 for IERC20;
     using Address for address;
 
